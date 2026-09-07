@@ -647,7 +647,7 @@ namespace Orts.Viewer3D
                 else if (viewer.Simulator.TRK.Tr_RouteFile.DefaultCrossingSMS != null) soundFileName = viewer.Simulator.TRK.Tr_RouteFile.DefaultCrossingSMS;
                 if (soundFileName != "")
                 {
-                    var soundPath = ORTSPaths.GetFileFromFolders(new[] { viewer.Simulator.RoutePath, viewer.Simulator.BasePath }, @"\\sound\\" + soundFileName);
+                    var soundPath = ORTSPaths.GetFileFromFolders(new[] { viewer.Simulator.RoutePath, viewer.Simulator.BasePath }, Path.Combine("sound", soundFileName));
                     try
                     {
                         Sound = new SoundSource(viewer, position.WorldLocation, Events.Source.MSTSCrossing, soundPath);
@@ -694,7 +694,7 @@ namespace Orts.Viewer3D
                 //     MSTS plays through the first 1.0 seconds of the animation forwards for closing and backwards for
                 //     opening. The number of frames defined doesn't matter; the animation is limited by time so the frame
                 //     rate (based on 30FPS) is what's needed.
-                if (AnimatedPartOpenLoop.MatrixIndexes.Count + AnimatedPartClosing.MatrixIndexes.Count + AnimatedPartClosedLoop.MatrixIndexes.Count == 0)
+                if (AnimatedPartOpenLoop.MatrixIndexes.Count + AnimatedPartClosing.MatrixIndexes.Count + AnimatedPartClosedLoop.MatrixIndexes.Count + AnimatedPartClearing.MatrixIndexes.Count == 0)
                 {
                     if (speed < 0)
                     {
@@ -704,7 +704,7 @@ namespace Orts.Viewer3D
                     else
                     {
                         AnimatedPartClosing.AddAnimations();
-                        AnimatedPartClosing.SetMstsSpeed(speed, AnimatedPart.MstsOptions.MaxFrameFromFrameRatePer30);
+                        AnimatedPartClosing.SetMstsSpeed(speed, AnimatedPart.MstsOptions.SpeedFromFrameRatePer30 | AnimatedPart.MstsOptions.MaxFrameFromFrameRatePer30);
                     }
                 }
                 else
@@ -882,7 +882,7 @@ namespace Orts.Viewer3D
         {
             if (Viewer.Simulator.TRK.Tr_RouteFile.DefaultDieselTowerSMS != null && FuelPickupItemObj.PickupType == 7) // Testing for Diesel PickupType
             {
-                var soundPath = ORTSPaths.GetFileFromFolders(new[] { Viewer.Simulator.RoutePath, Viewer.Simulator.BasePath }, @"\\sound\\" + Viewer.Simulator.TRK.Tr_RouteFile.DefaultDieselTowerSMS);
+                var soundPath = ORTSPaths.GetFileFromFolders(new[] { Viewer.Simulator.RoutePath, Viewer.Simulator.BasePath }, Path.Combine("sound", Viewer.Simulator.TRK.Tr_RouteFile.DefaultDieselTowerSMS));
                 try
                 {
                     Sound = new SoundSource(Viewer, Position.WorldLocation, Events.Source.MSTSFuelTower, soundPath);
@@ -895,7 +895,7 @@ namespace Orts.Viewer3D
             }
             if (Viewer.Simulator.TRK.Tr_RouteFile.DefaultWaterTowerSMS != null && FuelPickupItemObj.PickupType == 5) // Testing for Water PickupType
             {
-                var soundPath = ORTSPaths.GetFileFromFolders(new[] { Viewer.Simulator.RoutePath, Viewer.Simulator.BasePath }, @"\\sound\\" + Viewer.Simulator.TRK.Tr_RouteFile.DefaultWaterTowerSMS);
+                var soundPath = ORTSPaths.GetFileFromFolders(new[] { Viewer.Simulator.RoutePath, Viewer.Simulator.BasePath }, Path.Combine("sound", Viewer.Simulator.TRK.Tr_RouteFile.DefaultWaterTowerSMS));
                 try
                 {
                     Sound = new SoundSource(Viewer, Position.WorldLocation, Events.Source.MSTSFuelTower, soundPath);
@@ -908,7 +908,7 @@ namespace Orts.Viewer3D
             }
             if (Viewer.Simulator.TRK.Tr_RouteFile.DefaultCoalTowerSMS != null && (FuelPickupItemObj.PickupType == 6 || FuelPickupItemObj.PickupType == 2))
             {
-                var soundPath = ORTSPaths.GetFileFromFolders(new[] { Viewer.Simulator.RoutePath, Viewer.Simulator.BasePath }, @"\\sound\\" + Viewer.Simulator.TRK.Tr_RouteFile.DefaultCoalTowerSMS);
+                var soundPath = ORTSPaths.GetFileFromFolders(new[] { Viewer.Simulator.RoutePath, Viewer.Simulator.BasePath }, Path.Combine("sound", Viewer.Simulator.TRK.Tr_RouteFile.DefaultCoalTowerSMS));
                 try
                 {
                     Sound = new SoundSource(Viewer, Position.WorldLocation, Events.Source.MSTSFuelTower, soundPath);
@@ -1001,7 +1001,7 @@ namespace Orts.Viewer3D
 
         public override void Initialize()
         {
-            var soundPath = ORTSPaths.GetFileFromFolders(new[] { Viewer.Simulator.RoutePath + @"\\sound\\" + (FuelPickupItemObj.CraneSound ?? "containercrane.sms"), Viewer.Simulator.BasePath + @"\\sound\\containercrane.sms" }, "");
+            var soundPath = ORTSPaths.GetFileFromFolders(new[] { Path.Combine(Viewer.Simulator.RoutePath, "sound", FuelPickupItemObj.CraneSound ?? "containercrane.sms"), Path.Combine(Viewer.Simulator.BasePath, "sound", "containercrane.sms") }, "");
             try
             {
                 Sound = new SoundSource(Viewer, Position.WorldLocation, Events.Source.ORTSContainerCrane, soundPath);
@@ -1195,7 +1195,7 @@ namespace Orts.Viewer3D
             }
             if (viewer.Simulator.TRK.Tr_RouteFile.DefaultTurntableSMS != null)
             {
-                var soundPath = ORTSPaths.GetFileFromFolders(new[] { viewer.Simulator.RoutePath, viewer.Simulator.BasePath }, @"\\sound\\" + viewer.Simulator.TRK.Tr_RouteFile.DefaultTurntableSMS);
+                var soundPath = ORTSPaths.GetFileFromFolders(new[] { viewer.Simulator.RoutePath, viewer.Simulator.BasePath }, Path.Combine("sound", viewer.Simulator.TRK.Tr_RouteFile.DefaultTurntableSMS));
                 try
                 {
                     Sound = new SoundSource(viewer, initialPosition.WorldLocation, Events.Source.ORTSTurntable, soundPath);
@@ -1305,7 +1305,7 @@ namespace Orts.Viewer3D
             }
             if (viewer.Simulator.TRK.Tr_RouteFile.DefaultTurntableSMS != null)
             {
-                var soundPath = ORTSPaths.GetFileFromFolders(new[] { viewer.Simulator.RoutePath, viewer.Simulator.BasePath }, @"\\sound\\" + viewer.Simulator.TRK.Tr_RouteFile.DefaultTurntableSMS);
+                var soundPath = ORTSPaths.GetFileFromFolders(new[] { viewer.Simulator.RoutePath, viewer.Simulator.BasePath }, Path.Combine("sound", viewer.Simulator.TRK.Tr_RouteFile.DefaultTurntableSMS));
                 try
                 {
                     Sound = new SoundSource(viewer, initialPosition.WorldLocation, Events.Source.ORTSTurntable, soundPath);
