@@ -880,54 +880,36 @@ namespace Orts.Viewer3D
 
         public virtual void Initialize()
         {
-            if (Viewer.Simulator.TRK.Tr_RouteFile.DefaultDieselTowerSMS != null && FuelPickupItemObj.PickupType == 7) // Testing for Diesel PickupType
+            string sms = "";
+            switch (FuelPickupItemObj.PickupType)
             {
-                var soundPath = ORTSPaths.GetFileFromFolders(new[] { Viewer.Simulator.RoutePath, Viewer.Simulator.BasePath }, Path.Combine("sound", Viewer.Simulator.TRK.Tr_RouteFile.DefaultDieselTowerSMS));
-                try
-                {
-                    Sound = new SoundSource(Viewer, Position.WorldLocation, Events.Source.MSTSFuelTower, soundPath);
-                    Viewer.SoundProcess.AddSoundSources(this, new List<SoundSourceBase>() { Sound });
-                }
-                catch (Exception error)
-                {
-                    Trace.WriteLine(new FileLoadException(Viewer.Simulator.TRK.Tr_RouteFile.DefaultDieselTowerSMS, error));
-                }
+                case 5: sms = Viewer.Simulator.TRK.Tr_RouteFile.DefaultWaterTowerSMS; break;
+                case 2:
+                case 6: sms = Viewer.Simulator.TRK.Tr_RouteFile.DefaultCoalTowerSMS; break;
+                case 7: sms = Viewer.Simulator.TRK.Tr_RouteFile.DefaultDieselTowerSMS; break;
             }
-            if (Viewer.Simulator.TRK.Tr_RouteFile.DefaultWaterTowerSMS != null && FuelPickupItemObj.PickupType == 5) // Testing for Water PickupType
+            var soundPath = ORTSPaths.GetFileFromFolders(new[] { Viewer.Simulator.RoutePath, Viewer.Simulator.BasePath }, Path.Combine("sound", sms));
+            try
             {
-                var soundPath = ORTSPaths.GetFileFromFolders(new[] { Viewer.Simulator.RoutePath, Viewer.Simulator.BasePath }, Path.Combine("sound", Viewer.Simulator.TRK.Tr_RouteFile.DefaultWaterTowerSMS));
-                try
-                {
-                    Sound = new SoundSource(Viewer, Position.WorldLocation, Events.Source.MSTSFuelTower, soundPath);
-                    Viewer.SoundProcess.AddSoundSources(this, new List<SoundSourceBase>() { Sound });
-                }
-                catch (Exception error)
-                {
-                    Trace.WriteLine(new FileLoadException(Viewer.Simulator.TRK.Tr_RouteFile.DefaultWaterTowerSMS, error));
-                }
+                Sound = new SoundSource(Viewer, Position.WorldLocation, Events.Source.MSTSFuelTower, soundPath);
+                Viewer.SoundProcess.AddSoundSources(this, new List<SoundSourceBase>() { Sound });
             }
-            if (Viewer.Simulator.TRK.Tr_RouteFile.DefaultCoalTowerSMS != null && (FuelPickupItemObj.PickupType == 6 || FuelPickupItemObj.PickupType == 2))
+            catch (Exception error)
             {
-                var soundPath = ORTSPaths.GetFileFromFolders(new[] { Viewer.Simulator.RoutePath, Viewer.Simulator.BasePath }, Path.Combine("sound", Viewer.Simulator.TRK.Tr_RouteFile.DefaultCoalTowerSMS));
-                try
-                {
-                    Sound = new SoundSource(Viewer, Position.WorldLocation, Events.Source.MSTSFuelTower, soundPath);
-                    Viewer.SoundProcess.AddSoundSources(this, new List<SoundSourceBase>() { Sound });
-                }
-                catch (Exception error)
-                {
-                    Trace.WriteLine(new FileLoadException(Viewer.Simulator.TRK.Tr_RouteFile.DefaultCoalTowerSMS, error));
-                }
+                Trace.WriteLine(new FileLoadException(sms, error));
             }
+
             FuelPickupItem = Viewer.Simulator.FuelManager.CreateFuelStation(Position, from tid in FuelPickupItemObj.TrItemIDList where tid.db == 0 select tid.dbID);
 
             if (SharedShape.HasAnimations())
             {
+                var mstsOptions = AnimatedPart.MstsOptions.SpeedFromFrameCount;
+                mstsOptions |= SharedShape.MatrixNames.Contains("ANIMATED_PARTS") ? AnimatedPart.MstsOptions.MaxFrameFromFrameCount : AnimatedPart.MstsOptions.MaxFrameIsOne;
+
                 AnimatedPart = new AnimatedPart(this);
                 AnimatedPart.AddAnimations();
                 AnimatedPart.SetGltfSpeed(1.0f / FuelPickupItemObj.PickupAnimData.AnimationSpeed);
-                AnimatedPart.SetMstsSpeed(1.0f / FuelPickupItemObj.PickupAnimData.AnimationSpeed,
-                    AnimatedPart.MstsOptions.SpeedFromFrameCount | AnimatedPart.MstsOptions.MaxFrameFromFrameCount);
+                AnimatedPart.SetMstsSpeed(1.0f / FuelPickupItemObj.PickupAnimData.AnimationSpeed, mstsOptions);
             }
         }
 
